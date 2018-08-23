@@ -25,11 +25,16 @@ app.post('/status', function(req, res) {
   console.log('Request received to POST status. Body: ', req.body);
   var receivedText = req.body.text;
   var randomNumber = Math.floor(Math.random() * (31));
+  var response = {
+    'response_type': 'in_channel',
+    'text': `There are ${randomNumber} people in ${receivedText} at the moment.`
+  };
+
   switch(receivedText.toLowerCase())
   {
     case "gaming room":
     case "canteen":
-      res.send(`There are ${randomNumber} people in ${receivedText} at the moment.`);
+      res.send(JSON.stringify(response));
       break;
     default:
         res.send('Room not recognized. Try again...');
