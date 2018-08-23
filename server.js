@@ -6,6 +6,8 @@ var app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(express.static('files'));
+app.use('/static', express.static('files'));
 
 app.get('/', function (req, res) {
   res.send(JSON.stringify({ Hello: 'World'}));
@@ -24,17 +26,36 @@ app.post('/name', function (req, res) {
 app.post('/status', function(req, res) {
   console.log('Request received to POST status. Body: ', req.body);
   var receivedText = req.body.text;
-  var randomNumber = Math.floor(Math.random() * (31));
-  var response = {
-    'response_type': 'in_channel',
-    'text': `There are ${randomNumber} people in ${receivedText} at the moment.`
-  };
 
   switch(receivedText.toLowerCase())
   {
     case "gaming room":
+      var randomNumber = Math.floor(Math.random() * (11));
+      res.send({
+        "response_type": "in_channel",
+        "text": "Current room status:",
+        "attachments": [
+          {
+            "color": "good",
+            "text": `There are ${randomNumber} people in ${receivedText} at the moment.`,
+            "image_url": "https://alpha-db-app.herokuapp.com/static/groom.png"
+          }
+        ]
+      });
+      break;
     case "canteen":
-      res.send(response);
+      var randomNumber = Math.floor(Math.random() * (51));
+      res.send({
+        "response_type": "in_channel",
+        "text": "Current room status:",
+        "attachments": [
+          {
+            "color": "danger",
+            "text": `There are ${randomNumber} people in ${receivedText} at the moment.`,
+            "image_url": "https://alpha-db-app.herokuapp.com/static/canteen.jpg"
+          }
+        ]
+      });
       break;
     default:
         res.send('Room not recognized. Try again...');
