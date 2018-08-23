@@ -4,6 +4,9 @@ var app = express();
 app.get('/', function (req, res) {
  res.send(JSON.stringify({ Hello: 'World'}));
 });
+app.get('/name', function (req, res) {
+ res.send('go away');
+});
 app.listen(port, function () {
  console.log('Example app listening on port !');
 });
