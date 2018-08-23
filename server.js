@@ -23,7 +23,17 @@ app.post('/name', function (req, res) {
 
 app.post('/status', function(req, res) {
   console.log('Request received to POST status. Body: ', req.body);
-  res.send('No.');
+  var receivedText = req.body.text;
+  var randomNumber = Math.floor(Math.random() * (31));
+  switch(receivedText.toLowerCase())
+  {
+    case "gaming room":
+    case "canteen":
+      res.send(`There are ${randomNumber} people in ${receivedText} at the moment.`);
+      break;
+    default:
+        res.send('Room not recognized. Try again...');
+  }
 });
 
 app.listen(port, function () {
