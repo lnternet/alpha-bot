@@ -1,12 +1,10 @@
-var express = require('express');
+// in sublime
+var express = require(‘express’);
+var port = process.env.PORT || 3000;
 var app = express();
-app.get('/', function(req, res) {
-  res.send('Hello Seattle\n');
+app.get(‘/’, function (req, res) {
+ res.send(JSON.stringify({ Hello: ‘World’}));
 });
-
-app.get('/name', function(req, res) {
-  res.send('John Cena\n');
+app.listen(port, function () {
+ console.log(`Example app listening on port !`);
 });
-
-app.listen(3001);
-console.log('Listening on port 3001...');
