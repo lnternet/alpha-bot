@@ -34,7 +34,7 @@ app.post('/status', function(req, res) {
   {
     case "gaming room":
     case "canteen":
-      res.send(JSON.stringify(response));
+      res.send(response);
       break;
     default:
         res.send('Room not recognized. Try again...');
