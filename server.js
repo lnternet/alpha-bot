@@ -1,5 +1,12 @@
 var express = require('express');
 var bodyParser = require("body-parser");
+var fs = require('fs');
+
+
+
+
+
+//*********** Server setup ************
 
 var port = process.env.PORT || 3000;
 var app = express();
@@ -9,7 +16,12 @@ app.use(bodyParser.json());
 app.use(express.static('files'));
 app.use('/static', express.static('files'));
 
+
+
+
+
 //********* Endpoints ***********
+
 app.post('/upload_result', function(req, res) {
   console.log('Request received to upload result', req.body);
   var room = req.body.room;
@@ -67,7 +79,25 @@ function getStatusColor(peopleNr) {
 }
 
 function getNumberOfPeople(room) {
-  return '10';
+  let file = null;
+  switch(room)
+  {
+    case 'gaming room':
+      file = 'static/groom.txt';
+      break;
+    case 'canteen':
+      file = 'static/canteen.txt'
+      break;
+  }
+
+  if(file != null) {
+    var result = fs.readFile('static/canteen.txt','utf8', function(error, content) {
+      if(content !== null)
+        result = parseInt(content);
+    });
+    return result;
+  }
+  return 0;
 }
 
 function getImageUrl(room) {
