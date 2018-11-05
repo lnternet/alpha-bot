@@ -1,4 +1,5 @@
 var express = require('express');
+var multer = require('multer');
 var bodyParser = require("body-parser");
 var fs = require('fs');
 var path = require('path');
@@ -17,18 +18,42 @@ app.use(bodyParser.json());
 app.use(express.static('files'));
 app.use('/static', express.static('files'));
 
+var Storage = multer.diskStorage({
+     destination: function(req, file, callback) {
+         callback(null, "files");
+     },
+     filename: function(req, file, callback) {
+         callback(null, file.originalname);
+     }
+ });
+
+ var upload = multer({
+     storage: Storage
+ }).single('img');
+
+
 
 
 
 
 //********* Endpoints ***********
+
 app.get('/test', function(req, res) {
   console.log('Request received to GET test');
   res.status(200).send('Hi!');
 });
 
+app.post("/upload_image", function(req, res) {
+  console.log('Request received to POST upload image.');
+  upload(req, res, function(err) {
+     if (err) {
+         return res.end("Something went wrong!", err);
+     }
+     return res.end("File uploaded sucessfully!.");
+  });
+ });
 
-app.post('/upload_result', function(req, res) {
+app.post('/upload_number', function(req, res) {
   console.log('Request received to upload result', req.body);
   var room = req.body.room;
   var detectedPeople = req.body.detectedPeople;
@@ -45,7 +70,6 @@ app.post('/upload_result', function(req, res) {
 
   res.status(200).send('Done!');
 });
-
 
 app.post('/status', function(req, res) {
   console.log('Request received to POST status. Body: ', req.body);
