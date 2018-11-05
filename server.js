@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require("body-parser");
 var fs = require('fs');
+var path = require('path');
 
 
 
@@ -21,24 +22,28 @@ app.use('/static', express.static('files'));
 
 
 //********* Endpoints ***********
+app.get('/test', function(req, res) {
+  console.log('Request received to GET test');
+  res.status(200).send('Hi!');
+});
+
 
 app.post('/upload_result', function(req, res) {
   console.log('Request received to upload result', req.body);
   var room = req.body.room;
+  var detectedPeople = req.body.detectedPeople;
 
   switch(room.toLowerCase())
   {
     case 'gaming room':
-    //Get image
-    //Save image as groom.png
-    //Get text
-    //Save text
-      break;
     case 'canteen':
+      setNumberOfPeople(room, detectedPeople);
       break;
     default:
-      res.send('Room not recognized. Try again...');
+      res.status(500).send('Room not recognized. Try again...');
   }
+
+  res.status(200).send('Done!');
 });
 
 
@@ -51,7 +56,7 @@ app.post('/status', function(req, res) {
     case "gaming room":
     case "canteen":
       var peopleNr = getNumberOfPeople(room);
-      res.send({
+      res.status(200).send({
         "response_type": "in_channel",
         "text": "Current room status:",
         "attachments": [
@@ -64,7 +69,7 @@ app.post('/status', function(req, res) {
       });
       break;
     default:
-        res.send('Room not recognized. Try again...');
+        res.status(500).send('Room not recognized. Try again...');
   }
 });
 
@@ -75,6 +80,7 @@ app.listen(port, function () {
 });
 
 function getStatusColor(peopleNr) {
+  if(peopleNr >= 10) return 'danger';
   return 'good';
 }
 
@@ -83,24 +89,42 @@ function getNumberOfPeople(room) {
   switch(room)
   {
     case 'gaming room':
-      file = 'static/groom.txt';
+      file = path.resolve(__dirname, 'files/groom.txt');
       break;
     case 'canteen':
-      file = 'static/canteen.txt'
+      file = path.resolve(__dirname, 'files/canteen.txt');
       break;
   }
 
   let result = '0';
-  // if(file != null) {
-  //   var result = fs.readFile('static/canteen.txt','utf8', function(error, content) {
-  //     console.log('CONTENT:', content);
-  //     if(content !== null)
-  //       result = content;
-  //   });
-  // }
-  return result;
+  if(file != null) {
+    result = fs.readFileSync(file, 'utf8');
+  }
+
+  return parseInt(result);
+}
+
+function setNumberOfPeople(room, nr) {
+  let file = null;
+  switch(room)
+  {
+    case 'gaming room':
+      file = path.resolve(__dirname, 'files/groom.txt');
+      break;
+    case 'canteen':
+      file = path.resolve(__dirname, 'files/canteen.txt');
+      break;
+  }
+
+  if(file != null) {
+    fs.writeFileSync(file, nr);
+  }
 }
 
 function getImageUrl(room) {
-  return 'https://alpha-db-app.herokuapp.com/static/canteen.jpg';
+  switch(room){
+    case 'gaming room': return 'https://alpha-db-app.herokuapp.com/static/groom.jpg';
+    case 'canteen': return 'https://alpha-db-app.herokuapp.com/static/canteen.jpg';
+    default: return '';
+  }
 }
