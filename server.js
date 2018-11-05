@@ -9,50 +9,44 @@ app.use(bodyParser.json());
 app.use(express.static('files'));
 app.use('/static', express.static('files'));
 
-app.get('/', function (req, res) {
-  res.send(JSON.stringify({ Hello: 'World'}));
+//********* Endpoints ***********
+app.post('/upload_result', function(req, res) {
+  console.log('Request received to upload result', req.body);
+  var room = req.body.room;
+
+  switch(room.toLowerCase())
+  {
+    case 'gaming room':
+    //Get image
+    //Save image as groom.png
+    //Get text
+    //Save text
+      break;
+    case 'canteen':
+      break;
+    default:
+      res.send('Room not recognized. Try again...');
+  }
 });
 
-app.get('/name', function (req, res) {
-  console.log('Request received to GET name. Headers: ', req.headers);
-  res.send('go away');
-});
-
-app.post('/name', function (req, res) {
-  console.log('Request received to POST name. Headers: ', req.headers);
-  res.send('go away');
-});
 
 app.post('/status', function(req, res) {
   console.log('Request received to POST status. Body: ', req.body);
-  var receivedText = req.body.text;
+  var room = req.body.text.toLowerCase();
 
-  switch(receivedText.toLowerCase())
+  switch(room)
   {
     case "gaming room":
-      var randomNumber = Math.floor(Math.random() * (11));
-      res.send({
-        "response_type": "in_channel",
-        "text": "Current room status:",
-        "attachments": [
-          {
-            "color": "good",
-            "text": `There are ${randomNumber} people in ${receivedText} at the moment.`,
-            "image_url": "https://alpha-db-app.herokuapp.com/static/groom.png"
-          }
-        ]
-      });
-      break;
     case "canteen":
-      var randomNumber = Math.floor(Math.random() * (51));
+      var peopleNr = getNumberOfPeople(room);
       res.send({
         "response_type": "in_channel",
         "text": "Current room status:",
         "attachments": [
           {
-            "color": "danger",
-            "text": `There are ${randomNumber} people in ${receivedText} at the moment.`,
-            "image_url": "https://alpha-db-app.herokuapp.com/static/canteen.jpg"
+            "color": getStatusColor(peopleNr),
+            "text": `There are ${peopleNr} people in ${room} at the moment.`,
+            "image_url": getImageUrl(room)
           }
         ]
       });
@@ -62,6 +56,20 @@ app.post('/status', function(req, res) {
   }
 });
 
+//*********************************
+
 app.listen(port, function () {
- console.log('Example app listening on port !');
+ console.log('Server started...');
 });
+
+function getStatusColor(peopleNr) {
+  return 'good';
+}
+
+function getNumberOfPeople(room) {
+  return '10';
+}
+
+function getImageUrl(room) {
+  return 'https://alpha-db-app.herokuapp.com/static/canteen.jpg';
+}
