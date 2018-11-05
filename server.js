@@ -93,6 +93,7 @@ function getNumberOfPeople(room) {
   let result = '0';
   if(file != null) {
     var result = fs.readFile('static/canteen.txt','utf8', function(error, content) {
+      console.log('CONTENT:', content);
       if(content !== null)
         result = content;
     });
