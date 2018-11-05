@@ -90,14 +90,14 @@ function getNumberOfPeople(room) {
       break;
   }
 
+  let result = '0';
   if(file != null) {
     var result = fs.readFile('static/canteen.txt','utf8', function(error, content) {
       if(content !== null)
-        result = parseInt(content);
+        result = content;
     });
-    return result;
   }
-  return 0;
+  return result;
 }
 
 function getImageUrl(room) {
